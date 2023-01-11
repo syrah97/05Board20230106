@@ -248,7 +248,7 @@ public class BoardService {
 		
 		//헤더설정
 		resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
-		resp.setHeader("Content-Disposition","attachment; filename="+URLEncoder.encode(filename,"UTF-8"));
+		resp.setHeader("Content-Disposition","attachment; filename="+URLEncoder.encode(filename,"UTF-8").replaceAll("\\", "%20"));
 		
 		//스트림형성 
 		FileInputStream fin = new FileInputStream(path+File.separator+filename);
@@ -286,15 +286,14 @@ public class BoardService {
 			String path=req.getServletContext().getRealPath("/"); 
 			path+="upload"+File.separator+email+File.separator+uuid;
 			
-			//헤더설정
-			resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
-			
 			//-----------
 			FileInputStream fin = null;
 			ZipEntry zipEntry = null;
 			File dir = new File(path);
 			File filelist[] = dir.listFiles();
 			
+			//헤더설정
+			resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
 			resp.setHeader("Content-Disposition","attachment; filename=All.zip");
 			
 			//스트림형성 
@@ -321,10 +320,7 @@ public class BoardService {
 			}
 			
 			zout.close();
-			bout.flush();
-			bout.close();
-			fin.close();
-			
+	
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
