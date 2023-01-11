@@ -36,7 +36,7 @@ public class forwardloginpageFilter implements Filter{
 				return ;
 			}
 			
-			String msg="로그인이 필요한 싸이트 입니다.";
+			String msg="<i class='bi bi-exclamation-triangle' style='color:orange;font-size:1rem'></i> 로그인이 필요한 페이지 입니다.";
 			req.setAttribute("msg",msg);
 			req.getRequestDispatcher("/auth/login.do").forward(request, response);
 			return ;

@@ -44,7 +44,7 @@ public class LoginController  implements SubController{
 			//3 서비스 실행
 			boolean flag = service.LoginCheck(params, req);
 			if(!flag) {
-				msg="ID나 PW가 올바르지 않습니다.";
+				msg="<i class='bi bi-exclamation-triangle' style='color:orange;font-size:1rem'></i> ID나 PW가 올바르지 않습니다.";
 				req.setAttribute("msg", msg);
 				req.getRequestDispatcher("/WEB-INF/view/auth/login.jsp").forward(req, resp);
 				return ;
@@ -69,7 +69,7 @@ public class LoginController  implements SubController{
 		for(String name : params.keySet()) {
 			//공백확인
 			 if(params.get(name)[0].isEmpty()) {
-				 msg="<i class='bi bi-exclamation-triangle' style='color:orange'></i> <span>공백은 포함할 수 없습니다.</span>";
+				 msg="<i class='bi bi-exclamation-triangle' style='color:orange;font-size:1rem'></i> <span>공백은 포함할 수 없습니다.</span>";
 				 return false;
 			 }		 
 		}

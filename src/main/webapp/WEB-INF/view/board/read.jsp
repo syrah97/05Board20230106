@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -172,6 +171,7 @@ section {
 		
 		<!-- Modal -->
 		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  
 		  <div class="modal-dialog modal-dialog-centered">
 		    <div class="modal-content">
 		      <div class="modal-header">
@@ -180,21 +180,25 @@ section {
 		      </div>
 		      
 		      <div class="modal-body">
-		      <c:set var="filenames" value="${fn:split(boarddto.filename,';')}" />
-		      <c:set var="filesizes" value="${fn:split(boarddto.filesize,';')}" />
-		      <c:forEach var="i" begin="0" step="1" end="${fn:length(filenames)-1}">
-		      	<div>
-		      		<a href="javascript:void(0)">${filenames[i]} (${filesizes[i]})Byte</a>
-		      	</div>
-		      </c:forEach>		       			      
+				<c:set var="filenames" value="${fn:split(boarddto.filename,';')}" />
+				<c:set var="filesizes" value="${fn:split(boarddto.filesize,';')}" />
+			      
+	 			<c:forEach var="i" begin="0" step="1" end="${fn:length(filenames)-1}" >
+					
+						<a href="${pageContext.request.contextPath}/board/download.do?dirpath=${boarddto.dirpath}&filename=${filenames[i]}">${filenames[i]} (${filesizes[i]}Byte)</a><br>
+					
+				</c:forEach>   	     
+			    
+
 		      </div>
-		      
 		      <div class="modal-footer">
-		        <button type="button" class="btn btn-primary">ZIP 받기</button>
+		       	<button type="button" class="btn btn-primary">ZIP 받기</button>
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+		 
 		      </div>
 		    </div>
 		  </div>
+		  
 		</div>
 	
 	</section>

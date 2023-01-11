@@ -1,10 +1,13 @@
 package com.test.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -149,7 +152,7 @@ public class BoardService {
 				}
 				
 			}	
-			
+			dto.setDirpath(uuid+"");
 			dto.setFilename(filelist.toString());
 			dto.setFilesize(filesize.toString());
 			
@@ -229,7 +232,43 @@ public class BoardService {
 	
 	
 	public void download(HttpServletRequest req, HttpServletResponse resp) {
+		try {
+		//파라미터
+		String filename=req.getParameter("filename");
+		String uuid=req.getParameter("dirpath");
+		//이메일정보 확인
+		HttpSession session = req.getSession(false);
+		AuthDto adto =(AuthDto)session.getAttribute("authdto");
+		String email=adto.getEmail();
+		//경로설정
+		String path=req.getServletContext().getRealPath("/"); 
+		path+="upload"+File.separator+email+File.separator+uuid;
 		
+		//헤더설정
+		resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
+		resp.setHeader("Content-Disposition","attachment; filename="+URLEncoder.encode(filename,"UTF-8"));
+		
+		//스트림형성 
+		FileInputStream fin = new FileInputStream(path+File.separator+filename);
+		ServletOutputStream bout = resp.getOutputStream();
+		
+		//다운로드 처리
+		int read=0;
+		byte[] buff = new byte[4096];
+		while(true)
+		{
+			read = fin.read(buff,0,buff.length);
+			if(read==-1)
+				break;
+			bout.write(buff,0,read);		
+		}
+		bout.flush();
+		bout.close();
+		fin.close();
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

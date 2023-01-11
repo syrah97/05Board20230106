@@ -24,7 +24,7 @@ public class LogoutController  implements SubController{
 			//로그아웃 실패시
 			
 		}
-		msg=URLEncoder.encode("로그아웃을 완료하였습니다.");
+		msg=URLEncoder.encode("<i class='bi bi-info-circle' style='color:orange;font-size:1rem'></i> 로그아웃을 완료하였습니다.");
 		
 		//4 view
 		String path=req.getContextPath();

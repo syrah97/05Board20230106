@@ -14,7 +14,7 @@
 <style>
 .container{width : 300px; margin:100px auto; text-align:center; position:relative;}
 .container *{margin-bottom:10px;}
-.container .msg{ position:absolute;left:0px;right:0px;top:-15px; margin:auto; font-size:0.5rem; color:gray; padding-left:15px;}
+.container .msg{ position:absolute;left:0px;right:0px;top:-25px; margin:auto; font-size:0.5rem; color:gray; padding-left:15px;}
 </style>
 
 

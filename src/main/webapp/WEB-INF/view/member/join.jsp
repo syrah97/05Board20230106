@@ -39,6 +39,7 @@
 		<input type="text" name="addr2"  placeholder="상세주소 입력" class="form-control" />
 		<button class="btn btn-secondary" onclick="isValid()">회원가입</button>
 		<input type="reset" value="초기화" class="btn btn-danger" />
+		<a href="${pageContext.request.contextPath}/auth/login.do" class="btn btn-warning">이전으로</a>
 	</form>
 </section>
 
