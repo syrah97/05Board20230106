@@ -228,5 +228,11 @@ public class BoardService {
 	}
 	
 	
+	public void download(HttpServletRequest req, HttpServletResponse resp) {
+		
+		
+	}
+	
+	
 	
 }

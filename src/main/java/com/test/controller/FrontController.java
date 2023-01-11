@@ -36,6 +36,7 @@ public class FrontController extends HttpServlet{
 		list.put(path+"/board/list.do", new BoardListController());
 		list.put(path+"/board/post.do", new BoardPostController());
 		list.put(path+"/board/read.do", new BoardReadController());
+		list.put(path+"/board/download.do", new BoardDownloadController());
 		
 		//Notice
 		list.put(path+"/notice/list.do", new NoticeListController());
