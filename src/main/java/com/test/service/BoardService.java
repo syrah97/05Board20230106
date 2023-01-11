@@ -6,6 +6,8 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -235,7 +237,7 @@ public class BoardService {
 		try {
 		//파라미터
 		String filename=req.getParameter("filename");
-		String uuid=req.getParameter("dirpath");
+		String uuid=req.getParameter("uuid");
 		//이메일정보 확인
 		HttpSession session = req.getSession(false);
 		AuthDto adto =(AuthDto)session.getAttribute("authdto");
@@ -269,6 +271,63 @@ public class BoardService {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+	}
+	public void downloadzip(HttpServletRequest req, HttpServletResponse resp) {
+		try {
+			//파라미터
+//			String filename=req.getParameter("filename");
+			String uuid=req.getParameter("uuid");
+			//이메일정보 확인
+			HttpSession session = req.getSession(false);
+			AuthDto adto =(AuthDto)session.getAttribute("authdto");
+			String email=adto.getEmail();
+			//경로설정
+			String path=req.getServletContext().getRealPath("/"); 
+			path+="upload"+File.separator+email+File.separator+uuid;
+			
+			//헤더설정
+			resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
+			
+			//-----------
+			FileInputStream fin = null;
+			ZipEntry zipEntry = null;
+			File dir = new File(path);
+			File filelist[] = dir.listFiles();
+			
+			resp.setHeader("Content-Disposition","attachment; filename=All.zip");
+			
+			//스트림형성 
+			ServletOutputStream bout = resp.getOutputStream();
+			ZipOutputStream zout = new ZipOutputStream(bout);
+			
+			byte[] buff = new byte[4096];
+			
+			for(File file:filelist) 
+			{
+				fin = new FileInputStream(file);
+				ZipEntry zip = new ZipEntry(file.getName().toString());
+				zout.putNextEntry(zip);
+				while (true) 
+				{
+					int data = fin.read(buff,0,buff.length);
+					if (data == -1)
+						break;
+					zout.write(buff,0,data);
+				}
+				
+				zout.closeEntry();
+				fin.close();
+			}
+			
+			zout.close();
+			bout.flush();
+			bout.close();
+			fin.close();
+			
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		
 	}
 	

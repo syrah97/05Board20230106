@@ -39,6 +39,7 @@ public class permissionFilter implements Filter{
 		pageGradeMap.put(path+"/board/post.do", 1);
 		pageGradeMap.put(path+"/board/read.do", 1);
 		pageGradeMap.put(path+"/board/download.do", 1);
+		pageGradeMap.put(path+"/board/downloadzip.do", 1);
 
 		pageGradeMap.put(path+"/notice/list.do", 1);
 		pageGradeMap.put(path+"/notice/post.do", 2);

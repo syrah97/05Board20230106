@@ -185,14 +185,14 @@ section {
 			      
 	 			<c:forEach var="i" begin="0" step="1" end="${fn:length(filenames)-1}" >
 					
-						<a href="${pageContext.request.contextPath}/board/download.do?dirpath=${boarddto.dirpath}&filename=${filenames[i]}">${filenames[i]} (${filesizes[i]}Byte)</a><br>
+						<a href="${pageContext.request.contextPath}/board/download.do?uuid=${boarddto.dirpath}&filename=${filenames[i]}">${filenames[i]} (${filesizes[i]}Byte)</a><br>
 					
 				</c:forEach>   	     
 			    
 
 		      </div>
 		      <div class="modal-footer">
-		       	<button type="button" class="btn btn-primary">ZIP 받기</button>
+		       	<a type="button" class="btn btn-primary" href="${pageContext.request.contextPath}/board/downloadzip.do?uuid=${boarddto.dirpath}">ZIP 받기</a>
 		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 		 
 		      </div>
