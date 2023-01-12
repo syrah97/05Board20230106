@@ -248,7 +248,7 @@ public class BoardService {
 		
 		//헤더설정
 		resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
-		resp.setHeader("Content-Disposition","attachment; filename="+URLEncoder.encode(filename,"UTF-8").replaceAll("\\", "%20"));
+		resp.setHeader("Content-Disposition","attachment; filename="+URLEncoder.encode(filename,"UTF-8").replaceAll("\\+", "%20"));
 		
 		//스트림형성 
 		FileInputStream fin = new FileInputStream(path+File.separator+filename);
@@ -273,57 +273,62 @@ public class BoardService {
 		}
 		
 	}
+	
 	public void downloadzip(HttpServletRequest req, HttpServletResponse resp) {
 		try {
-			//파라미터
-//			String filename=req.getParameter("filename");
-			String uuid=req.getParameter("uuid");
-			//이메일정보 확인
-			HttpSession session = req.getSession(false);
-			AuthDto adto =(AuthDto)session.getAttribute("authdto");
-			String email=adto.getEmail();
-			//경로설정
-			String path=req.getServletContext().getRealPath("/"); 
-			path+="upload"+File.separator+email+File.separator+uuid;
-			
-			//-----------
-			FileInputStream fin = null;
-			ZipEntry zipEntry = null;
-			File dir = new File(path);
-			File filelist[] = dir.listFiles();
-			
-			//헤더설정
-			resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
-			resp.setHeader("Content-Disposition","attachment; filename=All.zip");
-			
-			//스트림형성 
-			ServletOutputStream bout = resp.getOutputStream();
-			ZipOutputStream zout = new ZipOutputStream(bout);
-			
-			byte[] buff = new byte[4096];
-			
-			for(File file:filelist) 
-			{
-				fin = new FileInputStream(file);
-				ZipEntry zip = new ZipEntry(file.getName().toString());
-				zout.putNextEntry(zip);
-				while (true) 
-				{
-					int data = fin.read(buff,0,buff.length);
-					if (data == -1)
-						break;
-					zout.write(buff,0,data);
-				}
-				
-				zout.closeEntry();
-				fin.close();
-			}
-			
-			zout.close();
+		//파라미터
+		//String filename=req.getParameter("filename");
+		String uuid=req.getParameter("uuid");
+		//이메일정보 확인
+		HttpSession session = req.getSession(false);
+		AuthDto adto =(AuthDto)session.getAttribute("authdto");
+		String email=adto.getEmail();
+		//경로설정
+		String path=req.getServletContext().getRealPath("/"); 
+		path+="upload"+File.separator+email+File.separator+uuid;
+		
+		
+		
+		//--------------
+		FileInputStream fin=null;
+		ZipEntry zipEntry = null;
+		File dir = new File(path);
+		File filelist[] = dir.listFiles();
+		
+		//헤더설정
+		resp.setHeader("Content-Type","application/octet-stream;charset=utf-8");
+		resp.setHeader("Content-Disposition","attachment; filename=All.zip");
+		
+		//스트림형성 
+		ServletOutputStream bout = resp.getOutputStream();
+		ZipOutputStream zout = new ZipOutputStream(bout);
+		
 	
-			}catch(Exception e) {
-				e.printStackTrace();
+		byte[] buff = new byte[4096];	
+		for(File file:filelist)
+		{
+			fin = new FileInputStream(file);
+			ZipEntry zip = new ZipEntry(file.getName().toString());
+			zout.putNextEntry(zip);
+			while (true) 
+			{
+				int data = fin.read(buff,0,buff.length);
+				if (data == -1)
+					break;
+				zout.write(buff,0,data);
 			}
+			
+			zout.closeEntry();
+			fin.close();
+		}
+		zout.close();
+		
+		
+	
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	

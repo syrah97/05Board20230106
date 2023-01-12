@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.test.service.BoardService;
 
 public class BoardDownloadzipController implements SubController {
-	
 	private static String msg;
 	private BoardService service = BoardService.getInstance();
 	
@@ -41,5 +40,5 @@ public class BoardDownloadzipController implements SubController {
 	private boolean isValid(Map<String, String[]> params) {
 		return true;
 	}
-	
+
 }
