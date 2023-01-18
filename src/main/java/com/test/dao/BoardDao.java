@@ -10,7 +10,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import com.test.dto.BoardDto;
-import com.test.dto.Criteria;
+import com.test.dto.ReplyDto;
 
 public class BoardDao {
 	
@@ -222,10 +222,186 @@ public class BoardDao {
 		}	
 		return result;
 	}
-	
-	
-	
-	
 
+
+	
+	public int Insert(ReplyDto dto) {
+		
+		Connection conn=null;
+		PreparedStatement pstmt = null;
+		
+		int result=0;
+		
+		try {
+			conn = ds.getConnection();
+			pstmt=conn.prepareStatement("insert into tbl_reply values(null,?,?,?,now())");
+			pstmt.setInt(1, Integer.parseInt(dto.getBno())   );
+			pstmt.setString(2, dto.getEmail());
+			pstmt.setString(3, dto.getContent());
+			result=pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {pstmt.close();}catch(Exception e) {}
+			try {conn.close();}catch(Exception e) {}
+		}
+		
+		return result;
+	}
+	
+	
+	
+	
+	public List<ReplyDto> SelectAll(ReplyDto rdto) {
+		
+		Connection conn=null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		List<ReplyDto> list = new ArrayList();
+		ReplyDto dto = null;
+		
+
+		try {
+			conn = ds.getConnection();
+			pstmt=conn.prepareStatement("select * from tbl_reply where bno=? order by rno desc");
+			pstmt.setInt(1, Integer.parseInt(rdto.getBno()) );
+			rs=pstmt.executeQuery();
+			if(rs!=null)
+			{
+				while(rs.next())
+				{
+					dto=new ReplyDto();
+					dto.setRno( rs.getInt(1)+""	);
+					dto.setBno(	rs.getInt(2)+""	);
+					dto.setEmail(rs.getString(3));
+					dto.setContent(rs.getString(4));
+					dto.setDate(rs.getString(5));
+					
+					list.add(dto);
+				}
+				
+			}	
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		
+		}finally {
+			try {rs.close();}catch(Exception e) {}
+			try {pstmt.close();}catch(Exception e) {}
+			try {conn.close();}catch(Exception e) {}
+		}
+		
+		return list;
+	}
+	
+	
+	public int getReplyAmount(int bno) {
+		
+		Connection conn=null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		int cnt=0;
+		
+		try {
+			conn = ds.getConnection();
+			pstmt=conn.prepareStatement("select count(*) from tbl_reply where bno=?");
+			pstmt.setInt(1, bno);
+			
+			rs=pstmt.executeQuery();
+			if(rs!=null)
+			{
+				rs.next();
+				cnt=rs.getInt(1);
+				
+			}	
+		}catch(Exception e) {
+			e.printStackTrace();
+
+		}finally {
+			try {rs.close();}catch(Exception e) {}
+			try {pstmt.close();}catch(Exception e) {}
+			try {conn.close();}catch(Exception e) {}
+		}
+		
+		return cnt;
+	}
+
+	
+	//파일삭제용
+	public int Update(String bno  , String filename, String filesize) {
+		Connection conn=null;
+		PreparedStatement pstmt = null;
+		
+		int result=0;
+		try {
+			conn = ds.getConnection();
+			pstmt=conn.prepareStatement("update tbl_board set filename=?,filesize=? where no=?");	
+			pstmt.setString(1, filename);
+			pstmt.setString(2, filesize);
+			pstmt.setInt(3, Integer.parseInt(bno) );
+			
+			result=pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {pstmt.close();}catch(Exception e) {}
+			try {conn.close();}catch(Exception e) {}
+		}	
+		return result;
+		
+	}
+
+
+	public int Update(BoardDto dto) {
+		Connection conn=null;
+		PreparedStatement pstmt = null;
+		
+		int result=0;
+		try {
+			conn = ds.getConnection();
+			pstmt=conn.prepareStatement("update tbl_board set title=?,content=? where no=?");	
+			pstmt.setString(1, dto.getTitle());
+			pstmt.setString(2, dto.getContent());
+			pstmt.setInt(3, Integer.parseInt(dto.getNo()) );
+			
+			result=pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {pstmt.close();}catch(Exception e) {}
+			try {conn.close();}catch(Exception e) {}
+		}	
+		return result;
+		
+		
+	}
+
+
+	public int Delete(String bno) {
+		Connection conn=null;
+		PreparedStatement pstmt = null;
+		
+		int result=0;
+		try {
+			conn = ds.getConnection();
+			pstmt=conn.prepareStatement("delete from tbl_board where no=?");	
+			pstmt.setInt(1, Integer.parseInt(bno));
+
+			result=pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {pstmt.close();}catch(Exception e) {}
+			try {conn.close();}catch(Exception e) {}
+		}	
+		return result;
+		
+	}
 	
 }

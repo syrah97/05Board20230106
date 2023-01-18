@@ -2,9 +2,14 @@ package com.test.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -21,6 +26,7 @@ import com.test.dto.AuthDto;
 import com.test.dto.BoardDto;
 import com.test.dto.Criteria;
 import com.test.dto.PageDto;
+import com.test.dto.ReplyDto;
 
 public class BoardService {
 	
@@ -331,6 +337,133 @@ public class BoardService {
 		}
 		
 	}
+	
+	public boolean replyPost(ReplyDto rdto) {
+		boolean flag=false;
+		
+		int result= dao.Insert(rdto);
+		if(result>0)
+			flag=true;
+		
+		return flag;
+		
+	}
+	
+	
+	public List<ReplyDto> replyList(ReplyDto dto) {
+		return dao.SelectAll(dto);
+	}
+	
+	
+	
+	public int getReplyCount(int bno) {
+		
+		return dao.getReplyAmount(bno);
+		
+	}
+	
+	//파일삭제
+	public void removefile(HttpServletRequest req, HttpServletResponse resp) {
+		try {
+			Map<String,String[]> params = req.getParameterMap();
+			
+			//디렉토리 경로 설정
+			System.out.println("DIRPATH : " + req.getServletContext().getRealPath("/"));
+			uploadDir=req.getServletContext().getRealPath("/")+"upload";
+			
+			//접속한 Email 계정 확인
+			HttpSession session = req.getSession(false);
+			AuthDto adto =(AuthDto)session.getAttribute("authdto");
+			
+			//UUID(랜덤값) 폴더생성
+			String uuid = params.get("dirpath")[0];
+			String path = uploadDir+File.separator+adto.getEmail()+File.separator+uuid;
+			
+			//파일경로 확인
+			String filepath = path+File.separator+params.get("filename")[0];
+			System.out.println("파일삭제 경로 : " + filepath);
+			//파일삭제
+			  
+			 boolean flag = new File(filepath).delete();
+			 System.out.println("삭제 여부 : " + flag);
+			 
+			  
+		 
+	 
+			//세션 boarddto 재설정
+			BoardDto bdto = (BoardDto)session.getAttribute("boarddto");
+			String filenames = bdto.getFilename();
+			String filesizes = bdto.getFilesize();
+			filenames=filenames.replace(params.get("filename")[0]+";", "");
+			filesizes=filesizes.replace(params.get("filesize")[0]+";", "");
+			bdto.setFilename(filenames);
+			bdto.setFilesize(filesizes);
+			session.setAttribute("boarddto", bdto);
+			System.out.println("파일삭제전 BDTO : " + bdto);
+			//db 삭제 
+			dao.Update(bdto.getNo(),filenames,filesizes);
+		 
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+	public void boardUpdate(Map<String, String[]> params,HttpServletRequest req) {
+		String title = params.get("title")[0];
+		String content = params.get("content")[0];
+		HttpSession session = req.getSession(false);
+		
+		BoardDto dto = (BoardDto)session.getAttribute("boarddto");
+		dto.setTitle(title);
+		dto.setContent(content);
+		
+		dao.Update(dto);
+		
+		
+	}
+	public boolean RemoveBoard(HttpServletRequest req, HttpServletResponse resp) {
+		
+		boolean flag = false;
+		//------------------------------------
+		Map<String,String[]> params = req.getParameterMap();
+		
+		//디렉토리 경로 설정
+		System.out.println("DIRPATH : " + req.getServletContext().getRealPath("/"));
+		uploadDir=req.getServletContext().getRealPath("/")+"upload";
+		
+		//접속한 Email 계정 확인
+		HttpSession session = req.getSession(false);
+		AuthDto adto =(AuthDto)session.getAttribute("authdto");
+		
+		//UUID(랜덤값) 폴더생성
+		String uuid = params.get("dirpath")[0];
+		String path = uploadDir+File.separator+adto.getEmail()+File.separator+uuid;
+		
+		
+		//파일삭제  
+		File folder = new File(path);
+		File[] folder_list=null;
+		if(folder.exists())
+		{
+			folder_list = folder.listFiles(); //파일리스트 얻어오기
+			for(File file :folder_list) {
+				file.delete();
+			}
+			folder.delete(); //폴더 삭제
+		}
+		
+		
+		//-------------------------------------
+		String bno = req.getParameter("bno");	 
+		
+		int result = dao.Delete(bno);
+		if(result>0)
+			flag=true;
+		return flag;
+	}
+
 	
 	
 	

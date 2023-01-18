@@ -104,7 +104,7 @@ section {
 			<ul>
 				<li><a href="javascript:void(0)">나의정보</a></li>
 				<li><a href="${pageContext.request.contextPath}/auth/logout.do">로그아웃</a></li>
-				<li><a href="javascript:kakaoLogout()">카카오로그아웃</a></li>
+				<li><a href="javascript:kakaoLogout('${pageContext.request.contextPath }')">카카오로그아웃</a></li>
 			</ul>
 		</div>
 		<nav>
@@ -125,13 +125,14 @@ section {
 		<div>
 			<a href="${pageContext.request.contextPath}/main.do"> <i
 				class="bi bi-house-door"></i>
-			</a> > 회사소개
+			</a> > 카카오로그인 확인
 		</div>
 
-		<h1>오시는길</h1>
+		<h1>프로필정보</h1>
 		 
-			<button onclick="test()" class="btn btn-warning">주소검색API</button>
-			<div id='map' style="width: 100%; height: 350px;"></div>
+			아이디 : ${param.email }<br>
+			성별 : ${param.gender }<br>
+			프로필 사진 :  <img src="${param.profile_image }" style="width:50px;height:50px;"  /> <br>
 		 
 
 
@@ -246,7 +247,5 @@ section {
 			}
 		}
  </script>
-
-
 </body>
 </html>

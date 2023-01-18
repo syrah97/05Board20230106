@@ -25,6 +25,8 @@ public class LoginController  implements SubController{
 			//0 Get구별
 			String method=req.getMethod();
 			if(method.equals("GET")) {
+				
+				
 				System.out.println("[LC] 요청 METHOD : " + method);
 				req.getRequestDispatcher("/WEB-INF/view/auth/login.jsp").forward(req, resp);
 				return ;

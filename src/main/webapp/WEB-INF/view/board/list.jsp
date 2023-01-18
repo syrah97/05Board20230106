@@ -103,6 +103,7 @@ section {
 			<ul>
 				<li><a href="javascript:void(0)">나의정보</a></li>
 				<li><a href="${pageContext.request.contextPath}/auth/logout.do">로그아웃</a></li>
+				<li><a href="javascript:kakaoLogout('${pageContext.request.contextPath }')">카카오로그아웃</a></li>
 			</ul>
 		</div>
 		<nav>
@@ -205,6 +206,28 @@ section {
 
 
 
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+ <script>
+		Kakao.init('ca12c0d4f6ea096e99d25d2d2c9b7c77'); //발급받은 키 중 javascript키를 사용해준다.
+		console.log(Kakao.isInitialized()); // sdk초기화여부판단
 
+		//카카오로그아웃  
+		function kakaoLogout(path) {
+			if (Kakao.Auth.getAccessToken()) {
+				Kakao.API.request({
+					url : '/v1/user/unlink',
+					success : function(response) {
+						console.log("RESPONSE : " + response)
+						location.href = path+"/auth/logout.do"
+					},
+					fail : function(error) {
+						console.log(error)
+
+					},
+				})
+				Kakao.Auth.setAccessToken(undefined)
+			}
+		}
+ </script>
 </body>
 </html>

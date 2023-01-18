@@ -32,7 +32,7 @@
 				<input type="text" name="zipcode"  placeholder="우편번호를 입력하세요" class="form-control" />
 			</div>
 			<div class="col" style="text-align:right">
-				<button class="btn btn-secondary">우편번호 검색</button>	
+				<button class="btn btn-secondary" onclick="searchZip()">우편번호 검색</button>	
 			</div>	
 		</div>
 		<input type="text" name="addr1"  placeholder="기본주소 입력"  class="form-control" />
@@ -43,6 +43,7 @@
 	</form>
 </section>
 
+
 <script defer>
 	const isValid=function(){
 		const joinfrm = document.joinfrm;
@@ -52,6 +53,37 @@
 		joinfrm.submit();
 	}
 </script>
+
+<!-- 우편번호 검색 -->
+<script defer src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script defer>
+	
+	
+	const searchZip=function(){
+	    new daum.Postcode({
+	        oncomplete: function(data) {
+	            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+	            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+	            let form = document.joinfrm;
+	            var addr='';
+
+	            //사용자가 도로명 주소 선택
+	            if(data.userSelectedType==='R')
+	            {
+	            	addr=data.roadAddress;
+	            }
+	            else //사용자가 지번 주소 선택 'J'
+	            {
+	            	addr=data.jibunAddress;
+	            }  
+	            form.zipcode.value=data.zonecode;
+	            form.addr1.value=addr;
+	            
+	        }
+	    }).open();
+	}
+</script>
+<!-- 우편번호 검색 -->
 
 
 </body>

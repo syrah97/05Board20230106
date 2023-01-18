@@ -72,8 +72,32 @@ public class AuthService {
 	}
 	
 	
-	//Logout처리
 	
+	public boolean KakaoLoginCheck(Map<String, String[]> params, HttpServletRequest req) {
+		boolean flag=false;
+		String email = params.get("email")[0];
+		String gender = params.get("gender")[0];
+		String profile_image = params.get("profile_image")[0];
+		
+
+		//ID/PW일치한다면 email/grade(권한) 을 Session에 저장
+		AuthDto adto = new AuthDto();
+		adto.setEmail(email);
+		adto.setGrade("1");
+				
+		//Session 유지시간 설정
+		HttpSession session = req.getSession();
+		session.setAttribute("authdto", adto);
+		session.setMaxInactiveInterval(60*5);
+
+		//true 전달
+		flag=true;
+		
+		return flag;
+	
+	}
+	
+
 	
 	
 }

@@ -38,6 +38,15 @@ public class FrontController extends HttpServlet{
 		list.put(path+"/board/read.do", new BoardReadController());
 		list.put(path+"/board/download.do", new BoardDownloadController());
 		list.put(path+"/board/downloadzip.do", new BoardDownloadzipController());
+		list.put(path+"/board/replypost.do", new BoardReplyPostController());
+		list.put(path+"/board/replylist.do", new BoardReplyListController());
+		list.put(path+"/board/replycnt.do", new BoardReplyCntController());
+		list.put(path+"/board/removefile.do", new BoardFileRemoveController());
+		
+		
+		list.put(path+"/board/update.do", new BoardUpdateController());
+		list.put(path+"/board/delete.do", new BoardDeleteController());
+		
 		
 		//Notice
 		list.put(path+"/notice/list.do", new NoticeListController());
@@ -46,10 +55,13 @@ public class FrontController extends HttpServlet{
 		//Auth
 		list.put(path+"/auth/login.do", new LoginController());
 		list.put(path+"/auth/logout.do", new LogoutController());
+		list.put(path+"/auth/kakaologin.do", new KakaoLoginController());
 		
 		//Main
 		list.put(path+"/main.do", new MainController());
 		
+		//Mail
+		//list.put(path+"/mail/authcode.do", new AuthCodeController());
 		
 	}
 	

@@ -30,6 +30,11 @@ public class forwardloginpageFilter implements Filter{
 		
 		if(session.getAttribute("authdto")==null) //no login
 		{
+			//카카오 로그인 허용
+			if(request.getRequestURI().contains("/auth/kakaologin.do")) {
+				req.getRequestDispatcher("/auth/kakaologin.do").forward(request, response);
+				return ;
+			}
 			
 			if(request.getRequestURI().contains("/member/join.do")) {
 				req.getRequestDispatcher("/member/join.do").forward(request, response);

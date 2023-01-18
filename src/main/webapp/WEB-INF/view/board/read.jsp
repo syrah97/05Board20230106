@@ -21,6 +21,11 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 
+<!-- JQ -->
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
+
+
 <style>
 body {
 	padding: 10px;
@@ -106,6 +111,7 @@ section {
 			<ul>
 				<li><a href="javascript:void(0)">나의정보</a></li>
 				<li><a href="${pageContext.request.contextPath}/auth/logout.do">로그아웃</a></li>
+				<li><a href="javascript:kakaoLogout('${pageContext.request.contextPath }')">카카오로그아웃</a></li>
 			</ul>
 		</div>
 		<nav>
@@ -131,7 +137,7 @@ section {
 		<h1>자유게시판</h1>
 		<p></p>
 		
-		<table class="table w-75">
+		<table class="table">
 				<!-- Title / Count-->
 				<tr>
 					<th style="width:80px;">제목</th>
@@ -159,8 +165,8 @@ section {
 					<td colspan=4>
 						<button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal">첨부파일</button>
 						<a class="btn btn-primary" href="${pageContext.request.contextPath}/board/list.do?pageno=${pagedto.criteria.pageno}">이전으로</a>
-						<button class="btn btn-primary">수정하기</button>
-						<button class="btn btn-primary">삭제하기</button>
+						<a class="btn btn-primary" href="${pageContext.request.contextPath}/board/update.do?pageno=${pagedto.criteria.pageno}">수정하기</a>
+						<a class="btn btn-primary" href="${pageContext.request.contextPath}/board/delete.do?pageno=${pagedto.criteria.pageno}&bno=${boarddto.no}&dirpath=${boarddto.dirpath}">삭제하기</a>
 					</td>
 <!-- 					<td></td>
 					<td></td>
@@ -201,11 +207,119 @@ section {
 		  
 		</div>
 	
+	
+		<!-- REPLY -->
+		<style>
+		/* 스크롤바 표시는 x 기능은 o */
+			*::-webkit-scrollbar{
+			  display: none; /* Chrome, Safari, Opera*/
+			}
+		</style>
+		
+		
+		<div class='reply-header' style="margin-top:20px;font-size:1.3rem;">
+			<span >댓글</span>&nbsp;&nbsp;<span id=replycnt></span>
+		</div>
+		<div class='reply-input' style="position:relative;width:75%;">
+			<form action="" style="display:flex;" onsubmit="return false">	 
+				<input type="text" id="comment"  style="width:100%;outline:none;border:0px;" placeholder="댓글입력.." />
+				<button class="btn btn-primary" onclick="postreply('${pageContext.request.contextPath}')">전송</button>
+			</form>
+		</div>
+		<div class='reply-body' style=" height:300px; overflow:auto;" >
+			<!--
+
+			 -->
+		</div>
+
 	</section>
+	
+	<script defer>
+		const postreply=function(path){
+			
+			$.ajax({
+				url: path+"/board/replypost.do",
+				type : "GET",
+				dataType : 'html',
+				data :{"bno":${boarddto.no},"comment":$('#comment').val() },
+				success:function(result){
+					//alert(result);
+					$('#comment').val('');
+					
+					$('.reply-body *').remove();
+					showreply(path);
+				},
+				error:function(){
+					alert('error');
+				}
+			})
+			
+		}
+		
+		const showreply=function(path){
+			
+			$.ajax({
+				url: path+"/board/replylist.do",
+				type : "GET",
+				dataType : 'html',
+				data :{"bno":${boarddto.no} },
+				success:function(result){
+					 $('.reply-body').html(result);
+					 replycnt(path);
+				},
+				error:function(){
+					alert('error');
+				}
+			})
+			
+		}
+		showreply('${pageContext.request.contextPath}');
+		
+		
+		const replycnt=function(path){
+			
+			$.ajax({
+				url: path+"/board/replycnt.do",
+				type : "GET",
+				dataType : 'html',
+				data :{"bno":${boarddto.no} },
+				success:function(result){
+					 //alert(result);
+					 $('#replycnt').html(result);
+				},
+				error:function(){
+					alert('error');
+				}
+			})
+			
+			
+		}
+		
+	</script>
+	
 
+<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+ <script>
+		Kakao.init('ca12c0d4f6ea096e99d25d2d2c9b7c77'); //발급받은 키 중 javascript키를 사용해준다.
+		console.log(Kakao.isInitialized()); // sdk초기화여부판단
 
+		//카카오로그아웃  
+		function kakaoLogout(path) {
+			if (Kakao.Auth.getAccessToken()) {
+				Kakao.API.request({
+					url : '/v1/user/unlink',
+					success : function(response) {
+						console.log("RESPONSE : " + response)
+						location.href = path+"/auth/logout.do"
+					},
+					fail : function(error) {
+						console.log(error)
 
-
-
+					},
+				})
+				Kakao.Auth.setAccessToken(undefined)
+			}
+		}
+ </script>
 </body>
 </html>

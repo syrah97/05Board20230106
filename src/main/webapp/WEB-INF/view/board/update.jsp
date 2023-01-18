@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,6 +21,9 @@
 <!-- BSICON -->
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+<!-- JQ -->
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 
 <style>
 body {
@@ -104,7 +110,7 @@ section {
 			<ul>
 				<li><a href="javascript:void(0)">나의정보</a></li>
 				<li><a href="${pageContext.request.contextPath}/auth/logout.do">로그아웃</a></li>
-				<li><a href="javascript:kakaoLogout()">카카오로그아웃</a></li>
+				<li><a href="javascript:kakaoLogout('${pageContext.request.contextPath }')">카카오로그아웃</a></li>
 			</ul>
 		</div>
 		<nav>
@@ -113,7 +119,6 @@ section {
 				<li><a href="${pageContext.request.contextPath}/notice/list.do">공지사항</a></li>
 				<li><a href="${pageContext.request.contextPath}/board/list.do">자유게시판</a></li>
 				<li><a href="javascript:void(0)">ETC</a></li>
-
 			</ul>
 		</nav>
 	</header>
@@ -125,103 +130,61 @@ section {
 		<div>
 			<a href="${pageContext.request.contextPath}/main.do"> <i
 				class="bi bi-house-door"></i>
-			</a> > 회사소개
+			</a> > BOARD > READ > UPDATE
 		</div>
 
-		<h1>오시는길</h1>
-		 
-			<button onclick="test()" class="btn btn-warning">주소검색API</button>
-			<div id='map' style="width: 100%; height: 350px;"></div>
-		 
-
-
-	</section>
- 
-
- 
-
-
-	<!-- 다음주소 API -->
-	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-
-	<script>
-		var addr='';		//전역변수로 사용
-		<!-- 다음 시작  -->
-		function test(){
-		new daum.Postcode({
-		oncomplete : function(data) {
-		 // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
-		 // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+		<h1>자유게시판</h1>
+		<p></p>
+		<form action="" method="post"  onsubmit="return false" name='updatefrm'>
+			<table class="table w-50">
+				<tr>
+					<td>Title</td>
+					<td><input type="text" class="form-control" name="title" value="${boarddto.title }" /></td>
+				</tr>
+				<tr>
+					<td>Email</td>
+					<td><input type="text" class="form-control" name="email"  value="${boarddto.email}" /></td>
+				</tr>				
+				<tr>
+					<td>Content</td>
+					<td><textarea id="" cols="30" rows="10" name="content" class="form-control" >${boarddto.content }</textarea></td>
+				</tr>
+				<tr>
+					<td>Files</td>
+					<td>
+						<c:set var="filenames" value="${fn:split(boarddto.filename,';')}" />
+						<c:set var="filesizes" value="${fn:split(boarddto.filesize,';')}" />
+			      
+	 					<c:forEach var="i" begin="0" step="1" end="${fn:length(filenames)-1}" >
+								<%-- <span>${filenames[i]}</span> <a href="javascript:remove('${pageContext.request.contextPath}','${filenames[i]}','${filesizes[i]}')"> <i class="bi bi-trash3"></i>  </a>	<br> --%>
+						<span>${filenames[i]}</span> <a href="${pageContext.request.contextPath}/board/removefile.do?filename=${filenames[i]}&filesize=${filesizes[i]}'&dirpath=${boarddto.dirpath}"> <i class="bi bi-trash3"></i>  </a>	<br>
+					
+						</c:forEach>  
+						 
+					</td>
+				</tr>	
+				<tr>
+					<td colspan=2>
+						<a   class="btn btn-primary"  href="javascript:updatereq('${pageContext.request.contextPath}')">수정하기</a>
+						<a class="btn btn-secondary"  href="javascript:history.go(-1)">이전으로</a>				
+					</td>				 
+				</tr>												
+			</table>
+		</form>
 		
-		 //사용자가 도로명 주소 선택
-		 if(data.userSelectedType==='R')
-		 {
-		 	addr=data.roadAddress;
-		 	test2(addr);
-		 }
-		 else //사용자가 지번 주소 선택 'J'
-		 {
-		 	addr=data.jibunAddress;
-		 	test2(addr);
-		 }         
-		}	
-		}).open(); 
+	</section>
+
+
+	<script defer>
+		const updatereq =function(path){
+				
+			let form = document.updatefrm;
+			form.action=path+"/board/update.do"
+			form.submit();
+			
+			
 		}
 	</script>
-
-	<!-- 다음 끝  -->
-
-
-	<!-- 카카오 주소로위치 찾기  -->
-	<script type="text/javascript"
-		src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ca12c0d4f6ea096e99d25d2d2c9b7c77&libraries=services"></script>
-
-
-	<script>
-	//test 시작
-	function test2(addr)
-	{
-		var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-		mapOption = {
-		 center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-		 level: 3 // 지도의 확대 레벨
-		};  
-
-		//지도를 생성합니다    
-		var map = new kakao.maps.Map(mapContainer, mapOption); 
-	
-		//주소-좌표 변환 객체를 생성합니다
-		var geocoder = new kakao.maps.services.Geocoder();
-	
-		//주소로 좌표를 검색합니다
-		geocoder.addressSearch(addr, function(result, status) {
-	
-		// 정상적으로 검색이 완료됐으면 
-		if (status === kakao.maps.services.Status.OK) {
-	
-			 var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-			
-			 // 결과값으로 받은 위치를 마커로 표시합니다
-			 var marker = new kakao.maps.Marker({
-					     map: map,
-					     position: coords
-					 });
-			
-					 // 인포윈도우로 장소에 대한 설명을 표시합니다
-					 var infowindow = new kakao.maps.InfoWindow({
-					     content: '<div style="width:150px;text-align:center;padding:6px 0;">'+addr+'</div>'
-					 });
-					 infowindow.open(map, marker);
-			
-					 // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-					 map.setCenter(coords);
-				} 
-			});    
-
-	//test 끝
-	}
-</script>
-
 
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
  <script>
@@ -246,7 +209,5 @@ section {
 			}
 		}
  </script>
-
-
 </body>
 </html>
